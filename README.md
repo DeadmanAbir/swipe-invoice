@@ -54,28 +54,7 @@
 4. Start the development environment: `npm run dev`
    
 
-## Contact Us
+## Team
 
-<table>
-    <tr>
-        <th>Source</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td><a href="https://digitomize.com/discord" target="_blank">
-            <img src="https://discord.com/assets/847541504914fd33810e70a0ea73177e.ico" alt="Discord Logo" width="50" height="50">
-        </a></td>
-        <td>Join Our Discord Community for any help and troubleshooting.</td>
-    </tr>
-    <tr>
-        <td><a href="https://github.com/digitomize/digitomize/blob/main/CONTACT.md" target="_blank">
-            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="Contributing Logo" width="50" height="50">
-        </a></td>
-        <td>For more ways to get in touch, refer to our CONTACT.md file. </td>
-    </tr>
-</table>
-
-
-# Buy me a Coffee ☕
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/digitomize)
+- Abir Dutta (Backend + Gen AI stuff) - https://github.com/DeadmanAbir
+- Faisal (Frontend + UI + Styling) - https://github.com/faisal004
