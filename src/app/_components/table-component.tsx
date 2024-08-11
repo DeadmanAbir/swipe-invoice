@@ -47,7 +47,14 @@ const TableComponent = ({
           </div>
         </div>
       ) : error ? (
-        <div className="text-red-500">Error: {error}</div>
+        <div className="flex flex-col gap-2">
+          <div className="text-red-500">
+            Something went wrong
+          </div>
+          <Button onClick={handleClearStorage} size="sm">
+            Retry
+          </Button>
+        </div>
       ) : invoiceData ? (
         <Table>
           <TableBody className="border-2">
