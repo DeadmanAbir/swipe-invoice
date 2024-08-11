@@ -17,10 +17,11 @@ const TableComponent = ({
   const handleClearStorage = () => {
     localStorage.removeItem('invoiceData')
     setInvoiceData(null)
+    window.location.reload()
   }
   return (
     <div className="flex flex-col items-center gap-2 justify-center w-full">
-      <div className="text-2xl font-semibold">Invoice Extractor</div>
+      <div className="text-2xl font-semibold">Swipe Invoice Extractor</div>
 
       {loading ? (
         <div className="w-full flex flex-col gap-3">
@@ -84,7 +85,7 @@ const TableComponent = ({
 
       <div className="flex items-center justify-end w-full">
         {invoiceData && (
-          <Button onClick={handleClearStorage}>
+          <Button onClick={handleClearStorage} disabled={loading}>
             <Trash2 className="h-5 w-5" />
           </Button>
         )}
