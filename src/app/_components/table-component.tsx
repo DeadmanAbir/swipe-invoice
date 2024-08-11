@@ -7,7 +7,7 @@ import {
   TableHead,
   TableRow,
 } from '@/components/ui/table'
-import { CloudUpload, File, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 const TableComponent = ({
   invoiceData,
   loading,
