@@ -10,11 +10,21 @@ export const validateFile = async (
     return { valid: false, message: "No file provided." };
   }
 
-  const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+  const allowedTypes = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/msword",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+  ];
   if (!allowedTypes.includes(file.type)) {
     return {
       valid: false,
-      message: "Invalid file type. Only PDF, JPEG, and PNG files are allowed.",
+      message:
+        "Invalid file type. Only PDF, JPEG, PNG, DOCX, PPT files are allowed.",
     };
   }
 
@@ -62,7 +72,6 @@ export const extractInvoice = async (
       throw new Error(`Unexpected status code: ${res.statusCode}`);
     }
   } catch (e: any) {
-    // Use a proper logging mechanism here instead of console.log
     console.error("Error extracting invoice:", e.message);
     console.error("Status Code:", e.statusCode);
     console.error("Response Body:", e.body);
