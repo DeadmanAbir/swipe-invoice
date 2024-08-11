@@ -2,27 +2,25 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useEffect, useState } from 'react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Eraser, Trash, Trash2 } from 'lucide-react'
-interface InvoiceData {
-  customer_name: string;
-  customer_address: string;
-  customer_number: string;
-  customer_mail: string;
-  products: string;
-  total_amount: string;
+
+import TableComponent from './_components/table-component'
+
+export interface InvoiceData {
+  customer_name: string
+  customer_address: string
+  customer_number: string
+  customer_mail: string
+  products: string
+  total_amount: string
 }
+
 export default function Home() {
   const [files, setFiles] = useState<FileList | null>(null)
   const [fileURL, setFileURL] = useState<string | null>(null)
-  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
     setFiles(fileList)
@@ -32,19 +30,24 @@ export default function Home() {
       setFileURL(url)
     }
   }
+
   useEffect(() => {
     const storedInvoiceData = localStorage.getItem('invoiceData')
     if (storedInvoiceData) {
       setInvoiceData(JSON.parse(storedInvoiceData))
     }
   }, [])
+
   useEffect(() => {
     if (invoiceData) {
       localStorage.setItem('invoiceData', JSON.stringify(invoiceData))
     }
   }, [invoiceData])
+
   const handleSubmit = () => {
     if (files) {
+      setLoading(true)
+      setError(null)
       const formData = new FormData()
       formData.set('file', files[0])
 
@@ -52,19 +55,23 @@ export default function Home() {
         method: 'POST',
         body: formData,
       })
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to extract invoice data.')
+          }
+          return response.json()
+        })
         .then((data) => {
           const parsedData = JSON.parse(data.data.output)
           setInvoiceData(parsedData)
         })
         .catch((error) => {
-          console.error('Error:', error)
+          setError(error.message)
+        })
+        .finally(() => {
+          setLoading(false)
         })
     }
-  }
-  const handleClearStorage = () => {
-    localStorage.removeItem('invoiceData')
-    setInvoiceData(null)
   }
 
   return (
@@ -77,7 +84,9 @@ export default function Home() {
             onChange={handleFileChange}
             className="file-input "
           />
-          <Button onClick={handleSubmit} disabled={!fileURL} >Upload</Button>
+          <Button onClick={handleSubmit} disabled={!fileURL || loading}>
+            {loading ? 'Uploading...' : 'Upload'}
+          </Button>
         </div>
 
         {fileURL && (
@@ -90,46 +99,12 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div className="flex flex-col items-center gap-2 justify-center w-full">
-        <div className="text-2xl font-semibold">Invoice Extractor</div>
-
-        {invoiceData && (
-          <Table>
-            <TableBody className="border-2">
-              <TableRow>
-                <TableHead>Customer Name</TableHead>
-                <TableCell>{invoiceData.customer_name}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead>Customer Address</TableHead>
-                <TableCell>{invoiceData.customer_address}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead>Customer Number</TableHead>
-                <TableCell>{invoiceData.customer_number}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead>Customer Mail</TableHead>
-                <TableCell>{invoiceData.customer_mail}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead>Products</TableHead>
-                <TableCell>{invoiceData.products}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableHead>Total Amount</TableHead>
-                <TableCell>{invoiceData.total_amount}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        )}
-        <div className='flex items-center justify-end w-full'>
-        {invoiceData && (
-          <Button onClick={handleClearStorage}><Trash2 className='h-5 w-5'/></Button>
-        )}
-        </div>
-       
-      </div>
+      <TableComponent
+        invoiceData={invoiceData}
+        error={error}
+        setInvoiceData={setInvoiceData}
+        loading={loading}
+      />
     </div>
   )
 }
