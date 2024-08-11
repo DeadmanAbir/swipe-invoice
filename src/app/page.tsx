@@ -11,12 +11,18 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Eraser, Trash, Trash2 } from 'lucide-react'
-
+interface InvoiceData {
+  customer_name: string;
+  customer_address: string;
+  customer_number: string;
+  customer_mail: string;
+  products: string;
+  total_amount: string;
+}
 export default function Home() {
   const [files, setFiles] = useState<FileList | null>(null)
   const [fileURL, setFileURL] = useState<string | null>(null)
-  const [invoiceData, setInvoiceData] = useState(null)
-
+  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
     setFiles(fileList)
