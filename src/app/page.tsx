@@ -1,52 +1,53 @@
-'use client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useState } from 'react'
+"use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
 export default function Home() {
-  const [files, setFiles] = useState<FileList | null>(null)
-  const [fileURL, setFileURL] = useState<string | null>(null)
+  const [files, setFiles] = useState<FileList | null>(null);
+  const [fileURL, setFileURL] = useState<string | null>(null);
+  const [invoiceData, setInvoiceData] = useState(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = event.target.files
-    setFiles(fileList)
+    const fileList = event.target.files;
+    setFiles(fileList);
 
     if (fileList && fileList[0]) {
-      const url = URL.createObjectURL(fileList[0])
-      setFileURL(url)
+      const url = URL.createObjectURL(fileList[0]);
+      setFileURL(url);
     }
-  }
+  };
 
   const handleSubmit = () => {
     if (files) {
-      const formData = new FormData()
-      formData.set('file', files[0])
+      const formData = new FormData();
+      formData.set("file", files[0]);
 
-      fetch('/api/extractInvoice', {
-        method: 'POST',
+      fetch("/api/extractInvoice", {
+        method: "POST",
         body: formData,
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(JSON.parse(data.data.output))
+          const parsedData = JSON.parse(data.data.output);
+          setInvoiceData(parsedData);
         })
         .catch((error) => {
-          console.error('Error:', error)
-        })
+          console.error("Error:", error);
+        });
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen grid md:grid-cols-3 grid-cols-1 gap-2 justify-start items-start pt-20  max-w-[1440px]  mx-auto p-3">
+    <div className="min-h-screen grid md:grid-cols-2 grid-cols-1 gap-2 justify-center items-center pt-20 max-w-[1440px] mx-auto p-3">
       <div className="w-full flex flex-col items-center justify-center ">
         <div className="flex items-center space-x-3">
           <Input
@@ -68,32 +69,42 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div className="flex items-center justify-center col-span-2  w-full">
-      <Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Customer Name</TableHead>
-      <TableHead>Customer Address</TableHead>
-      <TableHead>Customer Number</TableHead>
-      <TableHead >Customer Mail</TableHead>
-      <TableHead >Products</TableHead>
-      <TableHead >Total Amount</TableHead>
-
-
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell>Paid</TableCell>
-      <TableCell>Credit Card</TableCell>
-      <TableCell>Paid</TableCell>
-      <TableCell>Credit Card</TableCell>   <TableCell>Paid</TableCell>
-      <TableCell>Credit Card</TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
-
+      <div className="flex flex-col items-center gap-2 justify-center w-full">
+        <div className="text-2xl font-semibold">
+          Invoice Extractor
+        </div>
+        
+        {invoiceData && (
+          <Table>
+            <TableBody className="border-2">
+              <TableRow>
+                <TableHead>Customer Name</TableHead>
+                <TableCell>{invoiceData.customer_name}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Customer Address</TableHead>
+                <TableCell>{invoiceData.customer_address}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Customer Number</TableHead>
+                <TableCell>{invoiceData.customer_number}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Customer Mail</TableHead>
+                <TableCell>{invoiceData.customer_mail}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Products</TableHead>
+                <TableCell>{invoiceData.products}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead>Total Amount</TableHead>
+                <TableCell>{invoiceData.total_amount}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
-  )
+  );
 }
