@@ -1,7 +1,7 @@
 import { UnstructuredClient } from "unstructured-client";
 import { PartitionResponse } from "unstructured-client/sdk/models/operations";
 import { Strategy } from "unstructured-client/sdk/models/shared/index.js";
-import { ChatOpenAI } from "@/utils/chatOpenAi";
+import { ChatGemini } from "@/utils/chatGemini";
 
 export const validateFile = async (
   file: File
@@ -72,15 +72,15 @@ export const extractInvoice = async (
 
 export const extractData = async (context: string) => {
   try {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) throw new Error("OPENAI_API_KEY is not set");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("GEMINI_API_KEY is not set");
 
-    const chatOpenAI = new ChatOpenAI({
+    const chatGemini = new ChatGemini({
       apiKey: apiKey,
-      model: "gpt-4",
+      model: "gemini-1.5-flash",
     });
 
-    const data = await chatOpenAI.chat({
+    const data = await chatGemini.chat({
       prompt:
         "We are providing you with the context of an invoice data, your job is to extract the customer details, products and total amount from the invoice data.",
       context: context,
