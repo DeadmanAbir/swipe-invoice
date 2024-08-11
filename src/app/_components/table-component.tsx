@@ -16,6 +16,7 @@ const TableComponent = ({
 }: any) => {
   const handleClearStorage = () => {
     localStorage.removeItem('invoiceData')
+    localStorage.removeItem('fileURL')
     setInvoiceData(null)
     window.location.reload()
   }

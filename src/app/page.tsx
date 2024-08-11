@@ -2,7 +2,6 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useEffect, useState } from 'react'
-
 import TableComponent from './_components/table-component'
 
 export interface InvoiceData {
@@ -20,21 +19,32 @@ export default function Home() {
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isFileFromLocalStorage, setIsFileFromLocalStorage] = useState(false)
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
     setFiles(fileList)
 
     if (fileList && fileList[0]) {
-      const url = URL.createObjectURL(fileList[0])
-      setFileURL(url)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const url = reader.result as string
+        setFileURL(url)
+        localStorage.setItem('fileURL', url)
+        setIsFileFromLocalStorage(false)
+      }
+      reader.readAsDataURL(fileList[0])
     }
   }
 
   useEffect(() => {
     const storedInvoiceData = localStorage.getItem('invoiceData')
-    if (storedInvoiceData) {
+    const storedFileURL = localStorage.getItem('fileURL')
+
+    if (storedInvoiceData && storedFileURL) {
       setInvoiceData(JSON.parse(storedInvoiceData))
+      setFileURL(storedFileURL)
+      setIsFileFromLocalStorage(true)
     }
   }, [])
 
@@ -76,15 +86,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 grid-cols-1 gap-2 justify-center items-center pt-20 max-w-[1440px] mx-auto p-3">
-      <div className="w-full flex flex-col items-center justify-center ">
+      <div className="w-full flex flex-col items-center justify-center">
         <div className="flex items-center space-x-3">
           <Input
             type="file"
             accept=".pdf, .jpg, .jpeg, .png, .docx, .ppt, .pptx, .doc"
             onChange={handleFileChange}
-            className="file-input "
+            className="file-input"
           />
-          <Button onClick={handleSubmit} disabled={!fileURL || loading}>
+          <Button
+            onClick={handleSubmit}
+            disabled={!fileURL || loading || isFileFromLocalStorage}
+          >
             {loading ? 'Uploading...' : 'Upload'}
           </Button>
         </div>
@@ -94,7 +107,7 @@ export default function Home() {
             <iframe
               src={fileURL}
               className="w-full h-full"
-              title="Uploaded PDF"
+              title="Uploaded File"
             ></iframe>
           </div>
         )}
