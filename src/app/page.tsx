@@ -77,7 +77,7 @@ export default function Home() {
             onChange={handleFileChange}
             className="file-input "
           />
-          <Button onClick={handleSubmit}>Upload</Button>
+          <Button onClick={handleSubmit} disabled={!fileURL} >Upload</Button>
         </div>
 
         {fileURL && (
